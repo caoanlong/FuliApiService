@@ -1,34 +1,34 @@
 const Sequelize = require('sequelize')
 const sequelize = require('../config/squelize')
 
-/* 系统用户 */
-const Sys_user = sequelize.define('sys_user', {
-	user_id: {
+/* 系统菜单 */
+const Sys_menu = sequelize.define('sys_menu', {
+	menu_id: {
 		type: Sequelize.BIGINT(32),
 		primaryKey: true,
 		allowNull: false
 	},
-	avatar: {
-		type: Sequelize.STRING(1024)
+	menu_pid: {
+		type: Sequelize.BIGINT(32)
 	},
 	name: {
 		type: Sequelize.STRING(32),
 		allowNull: false
 	},
-	mobile: {
-		type: Sequelize.STRING(16),
+	route_name: {
+		type: Sequelize.STRING(100),
 		allowNull: false
 	},
-	password: {
-		type: Sequelize.STRING(255),
+	path: {
+		type: Sequelize.STRING(100),
 		allowNull: false
 	},
-	role_id: {
-		type: Sequelize.BIGINT(32)
+	icon: {
+		type: Sequelize.STRING(100)
 	},
-	is_disabled: {
-		type: Sequelize.BOOLEAN,
-		defaultValue: false
+	is_show: {
+		type: Squelize.BOOLEAN,
+		defaultValue: true
 	},
 	create_user_id: {
 		type: Sequelize.STRING(32)
@@ -46,4 +46,4 @@ const Sys_user = sequelize.define('sys_user', {
 	}
 })
 
-module.exports = Sys_user
+module.exports = Sys_menu

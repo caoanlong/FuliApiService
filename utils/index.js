@@ -1,0 +1,1 @@
+exports.snowflake = require('node-snowflake').Snowflake

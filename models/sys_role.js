@@ -31,7 +31,7 @@ const Sys_role = sequelize.define('sys_role', {
 })
 
 
-// Sys_role.hasOne(Sys_user, {as: 'create_user', foreignKey: 'create_user_id'})
+// Sys_role.belongsTo(Sys_user, {as: 'create_user', foreignKey: 'create_user_id'})
 // Sys_role.hasOne(Sys_user, {as: 'update_user', foreignKey: 'update_user_id'})
 
 module.exports = Sys_role

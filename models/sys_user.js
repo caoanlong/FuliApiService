@@ -1,5 +1,6 @@
 const Sequelize = require('sequelize')
 const sequelize = require('../config/squelize')
+
 const Sys_role = require('./sys_role')
 
 /* 系统用户 */

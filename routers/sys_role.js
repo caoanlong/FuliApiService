@@ -38,7 +38,18 @@ router.get('/list', async ctx => {
 router.get('/info', async ctx => {
 	const role_id = ctx.query.role_id
 	try {
-		let result = await Sys_role.findById(role_id)
+		let result = await Sys_role.findById(role_id, {
+			// include: [
+			// 	{ 
+			// 		model: Sys_user, 
+			// 		as: 'create_user' 
+			// 	},
+			// 	{ 
+			// 		model: Sys_user, 
+			// 		as: 'update_user' 
+			// 	}
+			// ]
+		})
 		ctx.body = {
 			code: 0,
 			msg: '成功',

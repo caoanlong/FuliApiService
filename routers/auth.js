@@ -26,6 +26,13 @@ router.post('/login', async ctx => {
 	try {
 		let result = await Sys_user.find({ where: { mobile: data['mobile'] }})
 		if (result && result.password == generatePassword(data['password'])) {
+			if (result['is_disabled']) {
+				ctx.body = {
+					code: -1,
+					msg: '账号已禁用'
+				}
+				return
+			}
 			let payLoad = {
 				user_id: result['user_id'],
 				avatar: result['avatar'],

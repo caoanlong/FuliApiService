@@ -156,7 +156,7 @@ router.post('/update', async ctx => {
 	if (data['password']) {
 		property['password'] = generatePassword(data['password'])
 	}
-	data['update_user_id'] = user.user_id
+	property['update_user_id'] = user.user_id
 	try {
 		await Sys_user.update(property, { where: { user_id: data['user_id'] } })
 		ctx.body = {

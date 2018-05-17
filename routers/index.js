@@ -6,12 +6,7 @@ const jwtConfig = require('../config/jwtConfig')
 router.use(async (ctx, next) => {
 	// 过滤登录路由
 	if (ctx.url.includes('login')) {
-		next()
-		return
-	}
-	// 过滤预检请求
-	if (ctx.method == 'OPTIONS') {
-		next()
+		await next()
 		return
 	}
 	const token = ctx.headers['x-access-token']
@@ -21,7 +16,7 @@ router.use(async (ctx, next) => {
 			if (decoded) {
 				if (parseInt(Date.now()/1000) > decoded.exp) {
 					ctx.body = {
-						code: 103,
+						code: 104,
 						msg: 'token已过期'
 					}
 				} else {
@@ -30,7 +25,7 @@ router.use(async (ctx, next) => {
 				}
 			} else {
 				ctx.body = {
-					code: 102,
+					code: 103,
 					msg: 'token非法'
 				}
 			}

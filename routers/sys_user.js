@@ -1,8 +1,9 @@
 const Router = require('koa-router')
 const router = new Router({prefix: '/sys_user'})
-const { snowflake } = require('../utils')
+const { snowflake, generatePassword } = require('../utils')
 
 const Sys_user = require('../models/sys_user')
+const Sys_role = require('../models/sys_role')
 
 // 查看用户列表
 router.get('/list', async ctx => {
@@ -22,22 +23,39 @@ router.get('/list', async ctx => {
 	} else if (data['is_disabled'] == 'false') {
 		where['is_disabled'] = false
 	}
-	let result = await Sys_user.findAndCountAll({
-		where: where,
-		offset: offset,
-		limit: pageSize,
-		order: [['create_time', 'DESC']]
-	})
-	if (result) {
+	try {
+		let result = await Sys_user.findAndCountAll({
+			where: where,
+			offset: offset,
+			limit: pageSize,
+			order: [['create_time', 'DESC']],
+			include: [
+				{ 
+					model: Sys_role, 
+					as: 'sys_role' 
+				},
+				{ 
+					model: Sys_user, 
+					as: 'create_user' 
+				},
+				{ 
+					model: Sys_user, 
+					as: 'update_user' 
+				}
+			]
+		})
+		for (let i = 0; i < result.rows.length; i++) {
+			result.rows[i].password = ''
+		}
 		ctx.body = {
 			code: 0,
 			msg: '成功',
 			data: result
 		}
-	} else {
+	} catch (err) {
 		ctx.body = {
 			code: -1,
-			msg: '失败'
+			msg: err.name
 		}
 	}
 })
@@ -45,23 +63,42 @@ router.get('/list', async ctx => {
 // 查看用户详情
 router.get('/info', async ctx => {
 	const user_id = ctx.query.user_id
-	let result = await Sys_user.findById(user_id)
-	if (result) {
-		ctx.body = {
-			code: 0,
-			msg: '成功',
-			data: result
+	try {
+		let result = await Sys_user.findById(user_id, {
+			include: [
+				{ 
+					model: Sys_role, 
+					as: 'sys_role' 
+				},
+				{ 
+					model: Sys_user, 
+					as: 'create_user' 
+				},
+				{ 
+					model: Sys_user, 
+					as: 'update_user' 
+				}
+			]
+		})
+		if (result) {
+			result.password = ''
+			ctx.body = {
+				code: 0,
+				msg: '成功',
+				data: result
+			}
 		}
-	} else {
+	} catch (err) {
 		ctx.body = {
 			code: -1,
-			msg: '失败'
+			msg: err.name
 		}
 	}
 })
 
 // 添加用户
 router.post('/add', async ctx => {
+	let user = ctx.state.user
 	let data = ctx.request.body
 	if (!data['name']) {
 		ctx.body = {
@@ -83,12 +120,72 @@ router.post('/add', async ctx => {
 			msg: '密码不能为空'
 		}
 		return
+	} else {
+		data['password'] = generatePassword(data['password'])
 	}
 	data['user_id'] = snowflake.nextId()
-	await Sys_user.create(data)
-	ctx.body = {
-		code: 0,
-		msg: '成功'
+	data['create_user_id'] = user.user_id
+	data['update_user_id'] = user.user_id
+	try {
+		await Sys_user.create(data)
+		ctx.body = {
+			code: 0,
+			msg: '成功'
+		}
+	} catch (err) {
+		ctx.body = {
+			code: -1,
+			msg: err.name
+		}
+	}
+})
+
+// 编辑用户
+router.post('/update', async ctx => {
+	let user = ctx.state.user
+	let data = ctx.request.body
+	let property = {
+		avatar: data['avatar'],
+		name: data['name'],
+		mobile: data['mobile'],
+		role_id: data['role_id'],
+		is_disabled: data['is_disabled'],
+		update_user_id: null,
+		update_time: new Date()
+	}
+	if (data['password']) {
+		property['password'] = generatePassword(data['password'])
+	}
+	data['update_user_id'] = user.user_id
+	try {
+		await Sys_user.update(property, { where: { user_id: data['user_id'] } })
+		ctx.body = {
+			code: 0,
+			msg: '成功'
+		}
+	} catch (err) {
+		ctx.body = {
+			code: -1,
+			msg: err.name
+		}
+	}
+})
+
+// 删除用户
+router.post('/delete', async ctx => {
+	let data = ctx.request.body
+	let ids = data['ids'].split(',')
+	try {
+		await Sys_user.destroy({ where: { user_id: { $in: ids } } })
+		ctx.body = {
+			code: 0,
+			msg: '成功'
+		}
+	} catch (err) {
+		ctx.body = {
+			code: -1,
+			msg: err.name
+		}
 	}
 })
 module.exports = router

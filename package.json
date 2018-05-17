@@ -15,11 +15,12 @@
   "license": "ISC",
   "dependencies": {
     "axios": "^0.18.0",
+    "jsonwebtoken": "^8.2.1",
     "koa": "^2.5.1",
-    "koa-body": "^2.5.0",
     "koa-bodyparser": "^4.2.0",
     "koa-logger": "^3.2.0",
     "koa-router": "^7.4.0",
+    "koa2-cors": "^2.0.5",
     "mysql2": "^1.5.3",
     "node-snowflake": "^0.0.1",
     "sequelize": "^4.37.7"

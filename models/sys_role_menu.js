@@ -8,7 +8,7 @@ const Sys_role_menu = sequelize.define('sys_role_menu', {
 		allowNull: false
 	},
 	menu_id: {
-		type: Sequelize.STRING(32),
+		type: Sequelize.BIGINT(32),
 		allowNull: false
 	}
 })

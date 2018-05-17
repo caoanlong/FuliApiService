@@ -31,10 +31,10 @@ const Sys_menu = sequelize.define('sys_menu', {
 		defaultValue: true
 	},
 	create_user_id: {
-		type: Sequelize.STRING(32)
+		type: Sequelize.BIGINT(32)
 	},
 	update_user_id: {
-		type: Sequelize.STRING(32)
+		type: Sequelize.BIGINT(32)
 	},
 	create_time: {
 		type: Sequelize.DATE(),

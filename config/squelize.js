@@ -39,8 +39,8 @@ const operatorsAliases = {
 }
 
 const sequelize = new Sequelize(config.database, config.user, config.password, {
-    host: config.host,
-    port: config.port,
+	host: config.host,
+	port: config.port,
 	dialect: 'mysql',
 	pool: {
 		idle: 30000,
@@ -57,9 +57,10 @@ const sequelize = new Sequelize(config.database, config.user, config.password, {
 	operatorsAliases
 })
 
-sequelize.sync().then(result => {
-    console.log('mysql connect on port' + config.port)
-    console.log('sync all models!')
-})
+// sequelize.sync({force: true}).then(result => {
+// 	console.log('mysql connect on port' + config.port)
+// 	console.log('sync all models!')
+// })
+console.log('mysql connect on port' + config.port)
 
 module.exports = sequelize

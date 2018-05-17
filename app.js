@@ -1,23 +1,28 @@
 const Koa = require('koa')
 const logger = require('koa-logger')
-const koaBodyparser = require('koa-bodyparser')
+const bodyParser = require('koa-bodyparser')
+const cors = require('koa2-cors')
 
 const router = require('./routers')
 
 const app = new Koa()
+
+app.use(bodyParser())
 app.use(logger())
 
+app.use(cors({
+	origin: function (ctx) {
+		if (ctx.url === '/test') {
+			return "*"; // 允许来自所有域名请求
+		}
+		return ctx.request.header.origin
+		// return 'http://localhost:8080' // 这样就能只允许 http://localhost:8080 这个域名的请求了
+	},
+	exposeHeaders: ['Accept', 'X-Access-Token'],
+	allowMethods: ['GET', 'POST', 'DELETE', 'PUT', 'OPTIONS'],
+	allowHeaders: ['Content-Type', 'Accept', 'X-Access-Token']
+}))
 
-app.use(async function(ctx, next) {
-	ctx.set("Access-Control-Allow-Origin", "*")
-	// ctx.set("Access-Control-Allow-Origin", ctx.request.header.origin)
-	// ctx.set("Access-Control-Allow-Credentials", true)
-	// ctx.set("Access-Control-Max-Age", 86400000)
-	ctx.set("Access-Control-Allow-Methods", "OPTIONS, GET, PUT, POST, DELETE")
-	ctx.set("Access-Control-Allow-Headers", "Content-Type, Accept, X-Access-Token")
-	await next()
-})
-// app.use(koaBodyparser())
 app.use(router.routes())
 
 module.exports = app

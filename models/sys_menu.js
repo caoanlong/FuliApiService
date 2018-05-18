@@ -1,6 +1,9 @@
 const Sequelize = require('sequelize')
 const sequelize = require('../config/squelize')
 
+const Sys_role = require('./sys_role')
+const Sys_role_menu = require('./sys_role_menu')
+
 /* 系统菜单 */
 const Sys_menu = sequelize.define('sys_menu', {
 	menu_id: {
@@ -26,8 +29,12 @@ const Sys_menu = sequelize.define('sys_menu', {
 	icon: {
 		type: Sequelize.STRING(100)
 	},
+	sort: {
+		type: Sequelize.BIGINT(10),
+		defaultValue: 1
+	},
 	is_show: {
-		type: Squelize.BOOLEAN,
+		type: Sequelize.BOOLEAN,
 		defaultValue: true
 	},
 	create_user_id: {
@@ -45,5 +52,9 @@ const Sys_menu = sequelize.define('sys_menu', {
 		defaultValue: new Date()
 	}
 })
+
+// Sys_menu.sync()
+Sys_menu.belongsToMany(Sys_role, {through: Sys_role_menu, foreignKey: 'menu_id'})
+Sys_role.belongsToMany(Sys_menu, {through: Sys_role_menu, foreignKey: 'role_id'})
 
 module.exports = Sys_menu

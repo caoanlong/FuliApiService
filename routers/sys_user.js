@@ -144,21 +144,13 @@ router.post('/add', async ctx => {
 router.post('/update', async ctx => {
 	let user = ctx.state.user
 	let data = ctx.request.body
-	let property = {
-		avatar: data['avatar'],
-		name: data['name'],
-		mobile: data['mobile'],
-		role_id: data['role_id'],
-		is_disabled: data['is_disabled'],
-		update_user_id: null,
-		update_time: new Date()
-	}
 	if (data['password']) {
-		property['password'] = generatePassword(data['password'])
+		data['password'] = generatePassword(data['password'])
 	}
-	property['update_user_id'] = user.user_id
+	data['update_user_id'] = user.user_id
+	data['update_time'] = new Date()
 	try {
-		await Sys_user.update(property, { where: { user_id: data['user_id'] } })
+		await Sys_user.update(data, { where: { user_id: data['user_id'] } })
 		ctx.body = {
 			code: 0,
 			msg: '成功'
@@ -174,9 +166,8 @@ router.post('/update', async ctx => {
 // 删除用户
 router.post('/delete', async ctx => {
 	let data = ctx.request.body
-	let ids = data['ids'].split(',')
 	try {
-		await Sys_user.destroy({ where: { user_id: { $in: ids } } })
+		await Sys_user.destroy({ where: { user_id: { $in: data['ids'] } } })
 		ctx.body = {
 			code: 0,
 			msg: '成功'

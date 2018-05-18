@@ -12,7 +12,7 @@ router.use(async (ctx, next) => {
 	const token = ctx.headers['x-access-token']
 	if (token) {
 		try {
-			const decoded = jwt.verify(token, jwtConfig.secret)
+			const decoded = await jwt.verify(token, jwtConfig.secret)
 			if (decoded) {
 				if (parseInt(Date.now()/1000) > decoded.exp) {
 					ctx.body = {
@@ -46,5 +46,6 @@ router.use(async (ctx, next) => {
 router.use(require('./auth').routes())
 router.use(require('./sys_user').routes())
 router.use(require('./sys_role').routes())
+router.use(require('./sys_menu').routes())
 
 module.exports = router

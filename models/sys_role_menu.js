@@ -13,4 +13,6 @@ const Sys_role_menu = sequelize.define('sys_role_menu', {
 	}
 })
 
+// Sys_role_menu.sync()
+
 module.exports = Sys_role_menu

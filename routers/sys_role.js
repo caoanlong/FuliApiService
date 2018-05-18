@@ -96,13 +96,10 @@ router.post('/add', async ctx => {
 router.post('/update', async ctx => {
 	let user = ctx.state.user
 	let data = ctx.request.body
-	let property = {
-		name: data['name'],
-		update_user_id: user.user_id,
-		update_time: new Date()
-	}
+	data['update_user_id'] = user.user_id
+	data['update_time'] = new Date()
 	try {
-		await Sys_role.update(property, { where: { role_id: data['role_id'] } })
+		await Sys_role.update(data, { where: { role_id: data['role_id'] } })
 		ctx.body = {
 			code: 0,
 			msg: '成功'
@@ -118,9 +115,8 @@ router.post('/update', async ctx => {
 // 删除角色
 router.post('/delete', async ctx => {
 	let data = ctx.request.body
-	let ids = data['ids'].split(',')
 	try {
-		await Sys_role.destroy({ where: { role_id: { $in: ids } } })
+		await Sys_role.destroy({ where: { role_id: { $in: data['ids'] } } })
 		ctx.body = {
 			code: 0,
 			msg: '成功'

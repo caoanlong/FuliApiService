@@ -66,4 +66,26 @@ router.post('/login', async ctx => {
 	}
 })
 
+// 获取用户信息
+router.get('/userInfo', async ctx => {
+	let user = ctx.state.user
+	const user_id = user.user_id
+	try {
+		let result = await Sys_user.findById(user_id)
+		if (result) {
+			result.password = ''
+			ctx.body = {
+				code: 0,
+				msg: '成功',
+				data: result
+			}
+		}
+	} catch (err) {
+		ctx.body = {
+			code: -1,
+			msg: err.name
+		}
+	}
+})
+
 module.exports = router

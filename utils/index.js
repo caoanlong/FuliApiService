@@ -8,15 +8,19 @@ exports.generatePassword = (password) => {
 }
 
 exports.menusTree = (source) => {
-	let data = source.map(item => Object.assign({}, item.dataValues))
+	let data = source.map(item => {
+		let obj = Object.assign({}, item.dataValues)
+		delete obj['sys_role_menu']
+		return obj
+	})
 	let json = [], hash = {}
 	return new Promise((resolve, reject) => {
 		for (let i = 0; i < data.length; i++) {
-			hash[data[i].Menu_ID] = data[i]
+			hash[data[i].menu_id] = data[i]
 		}
 		let hashVP
 		for (let j = 0; j < data.length; j++) {
-			hashVP = hash[data[j].Menu_PID]
+			hashVP = hash[data[j].menu_pid]
 			if (hashVP) {
 				if (!hashVP.children) {
 					hashVP.children = []

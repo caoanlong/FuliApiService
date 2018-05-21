@@ -53,6 +53,7 @@ router.get('/list', async ctx => {
 			data: result
 		}
 	} catch (err) {
+		console.log(err)
 		ctx.body = {
 			code: -1,
 			msg: err.name
@@ -81,7 +82,7 @@ router.get('/info', async ctx => {
 			]
 		})
 		if (result) {
-			result.password = ''
+			result.password = null
 			ctx.body = {
 				code: 0,
 				msg: '成功',
@@ -127,10 +128,19 @@ router.post('/add', async ctx => {
 	data['create_user_id'] = user.user_id
 	data['update_user_id'] = user.user_id
 	try {
-		await Sys_user.create(data)
-		ctx.body = {
-			code: 0,
-			msg: '成功'
+		let result = await Sys_user.find({ where: { mobile: data['mobile'] }})
+		if (result.user_id) {
+			ctx.body = {
+				code: -1,
+				msg: '手机号已存在'
+			}
+			return
+		} else {
+			await Sys_user.create(data)
+			ctx.body = {
+				code: 0,
+				msg: '成功'
+			}
 		}
 	} catch (err) {
 		ctx.body = {
@@ -144,16 +154,27 @@ router.post('/add', async ctx => {
 router.post('/update', async ctx => {
 	let user = ctx.state.user
 	let data = ctx.request.body
-	if (data['password']) {
+	if (!!data['password']) {
 		data['password'] = generatePassword(data['password'])
+	} else {
+		delete data['password']
 	}
 	data['update_user_id'] = user.user_id
 	data['update_time'] = new Date()
 	try {
-		await Sys_user.update(data, { where: { user_id: data['user_id'] } })
-		ctx.body = {
-			code: 0,
-			msg: '成功'
+		let result = await Sys_user.find({ where: { mobile: data['mobile'] }})
+		if (result.user_id && (result.mobile != data['mobile'])) {
+			ctx.body = {
+				code: -1,
+				msg: '手机号已存在'
+			}
+			return
+		} else {
+			await Sys_user.update(data, { where: { user_id: data['user_id'] } })
+			ctx.body = {
+				code: 0,
+				msg: '成功'
+			}
 		}
 	} catch (err) {
 		ctx.body = {

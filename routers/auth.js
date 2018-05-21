@@ -24,8 +24,9 @@ router.post('/login', async ctx => {
 		return
 	}
 	try {
+		let password = generatePassword(data['password'])
 		let result = await Sys_user.find({ where: { mobile: data['mobile'] }})
-		if (result && result.password == generatePassword(data['password'])) {
+		if (result && result.password == password) {
 			if (result['is_disabled']) {
 				ctx.body = {
 					code: -1,

@@ -5,6 +5,7 @@ const { snowflake, menusTree } = require('../utils')
 const Sys_menu = require('../models/sys_menu')
 const Sys_user = require('../models/sys_user')
 const Sys_role = require('../models/sys_role')
+const Sys_role_menu = require('../models/sys_role_menu')
 
 // 获取所有菜单
 router.get('/list/all', async ctx => {
@@ -42,6 +43,7 @@ router.get('/list', async ctx => {
 			permissions
 		}
 	} catch (err) {
+		console.log(err)
 		ctx.body = {
 			code: -1,
 			msg: err.name
@@ -53,15 +55,32 @@ router.get('/list', async ctx => {
 router.get('/info', async ctx => {
 	let menu_id = ctx.query.menu_id
 	try {
-		let menuInfo = await Sys_menu.findById(menu_id)
-		let roles = await menuInfo.getSys_roles()
-		menuInfo.roles = roles
+		let result = await Sys_menu.findById(menu_id, {
+			include: [{ model: Sys_role}]
+		})
+		let role_ids = []
+		await result.sys_roles.forEach(item => {
+			const { role_id } = item
+			role_ids.push(role_id)
+		})
+		let menuInfo = {
+			menu_id: result.menu_id,
+			menu_pid: result.menu_pid,
+			name: result.name,
+			route_name: result.route_name,
+			path: result.path,
+			icon: result.icon,
+			sort: result.sort,
+			is_show: result.is_show,
+			sys_roles: role_ids
+		}
 		ctx.body = {
 			code: 0,
 			msg: '成功',
 			data: menuInfo
 		}
 	} catch (err) {
+		console.log(err)
 		ctx.body = {
 			code: -1,
 			msg: err.name
@@ -77,12 +96,21 @@ router.post('/add', async ctx => {
 	data['create_user_id'] = user.user_id
 	data['update_user_id'] = user.user_id
 	try {
+		let datas = []
+		for (let i = 0; i < data['sys_roles'].length; i++) {
+			datas.push({
+				role_id: data['sys_roles'][i],
+				menu_id: data['menu_id']
+			})
+		}
 		await Sys_menu.create(data)
+		await Sys_role_menu.bulkCreate(datas)
 		ctx.body = {
 			code: 0,
 			msg: '成功'
 		}
 	} catch (err) {
+		console.log(err)
 		ctx.body = {
 			code: -1,
 			msg: err.name
@@ -97,7 +125,16 @@ router.post('/update', async ctx => {
 	data['update_user_id'] = user.user_id
 	data['update_time'] = new Date()
 	try {
+		let datas = []
+		for (let i = 0; i < data['sys_roles'].length; i++) {
+			datas.push({
+				role_id: data['sys_roles'][i],
+				menu_id: data['menu_id']
+			})
+		}
 		await Sys_menu.update(data, { where: { menu_id: data['menu_id'] } })
+		await Sys_role_menu.destroy({ where: { menu_id: data['menu_id'] } })
+		await Sys_role_menu.bulkCreate(datas)
 		ctx.body = {
 			code: 0,
 			msg: '成功'

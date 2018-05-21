@@ -106,6 +106,13 @@ router.post('/add', async ctx => {
 router.post('/update', async ctx => {
 	let user = ctx.state.user
 	let data = ctx.request.body
+	if (!data['name']) {
+		ctx.body = {
+			code: -1,
+			msg: '名称不能为空'
+		}
+		return
+	}
 	data['update_user_id'] = user.user_id
 	data['update_time'] = new Date()
 	try {
@@ -141,6 +148,7 @@ router.post('/delete', async ctx => {
 			msg: '成功'
 		}
 	} catch (err) {
+		console.log(err)
 		ctx.body = {
 			code: -1,
 			msg: err.name

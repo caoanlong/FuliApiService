@@ -18,6 +18,9 @@ const Sys_dict = sequelize.define('sys_dict', {
 		type: Sequelize.STRING(100),
 		allowNull: false
 	},
+	glamour: {
+		type: Sequelize.BIGINT(32)
+	},
 	type: {
 		type: Sequelize.STRING(100),
 		allowNull: false

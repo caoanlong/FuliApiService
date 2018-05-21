@@ -48,5 +48,6 @@ router.use(require('./sys_user').routes())
 router.use(require('./sys_role').routes())
 router.use(require('./sys_menu').routes())
 router.use(require('./sys_dict').routes())
+router.use(require('./image').routes())
 
 module.exports = router

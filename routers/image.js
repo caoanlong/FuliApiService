@@ -1,30 +1,40 @@
 const Router = require('koa-router')
-const router = new Router({prefix: '/sys_dict'})
+const router = new Router({prefix: '/image'})
 const { snowflake } = require('../utils')
 
-const Sys_dict = require('../models/sys_dict')
+const Image_src = require('../models/image')
 const Sys_user = require('../models/sys_user')
+const Sys_dict = require('../models/sys_dict')
 
-// 查看字典列表
+// 查看图片列表
 router.get('/list', async ctx => {
 	let data = ctx.query
 	let pageIndex = Number(data.pageIndex || 1)
 	let pageSize = Number(data.pageSize || 10)
 	let offset = (pageIndex - 1) * pageSize
 	let where = {}
-	if (data['type']) {
-		where['type'] = data['type']
+	if (data['name']) {
+		where['name'] = { $like: '%' + data['name'] + '%' }
 	}
-	if (data['description']) {
-		where['description'] = { $like: '%' + data['description'] + '%' }
+	if (data['level_id']) {
+		where['level_id'] =  data['level_id']
+	}
+	if (data['is_show'] == 'true') {
+		where['is_show'] = true
+	} else if (data['is_show'] == 'false') {
+		where['is_show'] = false
 	}
 	try {
-		let result = await Sys_dict.findAndCountAll({
+		let result = await Image_src.findAndCountAll({
 			where: where,
 			offset: offset,
 			limit: pageSize,
 			order: [['create_time', 'DESC']],
 			include: [
+				{ 
+					model: Sys_dict, 
+					as: 'level' 
+				},
 				{ 
 					model: Sys_user, 
 					as: 'create_user' 
@@ -32,6 +42,31 @@ router.get('/list', async ctx => {
 				{ 
 					model: Sys_user, 
 					as: 'update_user' 
+				}
+			]
+		})
+		ctx.body = {
+			code: 0,
+			msg: '成功',
+			data: result
+		}
+	} catch (err) {
+		ctx.body = {
+			code: -1,
+			msg: err.name
+		}
+	}
+})
+
+// 查看图片详情
+router.get('/info', async ctx => {
+	const image_id = ctx.query.image_id
+	try {
+		let result = await Image_src.findById(image_id, {
+			include: [
+				{ 
+					model: Sys_dict, 
+					as: 'level' 
 				}
 			]
 		})
@@ -49,15 +84,112 @@ router.get('/list', async ctx => {
 	}
 })
 
-// 查看字典详情
-router.get('/info', async ctx => {
-	const dict_id = ctx.query.dict_id
+// 添加图片
+router.post('/add', async ctx => {
+	let user = ctx.state.user
+	let data = ctx.request.body
+	if (!data['name']) {
+		ctx.body = {
+			code: -1,
+			msg: '名称不能为空'
+		}
+		return
+	}
+	if (!data['thumbnail']) {
+		ctx.body = {
+			code: -1,
+			msg: '缩略图不能为空'
+		}
+		return
+	}
+	if (!data['level_id']) {
+		ctx.body = {
+			code: -1,
+			msg: '级别不能为空'
+		}
+		return
+	}
+	if (!data['content']) {
+		ctx.body = {
+			code: -1,
+			msg: '内容不能为空'
+		}
+		return
+	}
+	data['image_id'] = snowflake.nextId()
+	data['create_user_id'] = user.user_id
+	data['update_user_id'] = user.user_id
 	try {
-		let result = await Sys_dict.findById(dict_id)
+		await Image_src.create(data)
 		ctx.body = {
 			code: 0,
-			msg: '成功',
-			data: result
+			msg: '成功'
+		}
+	} catch (err) {
+		ctx.body = {
+			code: -1,
+			msg: err.name
+		}
+	}
+	
+})
+
+// 编辑图片
+router.post('/update', async ctx => {
+	let user = ctx.state.user
+	let data = ctx.request.body
+	if (!data['name']) {
+		ctx.body = {
+			code: -1,
+			msg: '名称不能为空'
+		}
+		return
+	}
+	if (!data['thumbnail']) {
+		ctx.body = {
+			code: -1,
+			msg: '缩略图不能为空'
+		}
+		return
+	}
+	if (!data['level_id']) {
+		ctx.body = {
+			code: -1,
+			msg: '级别不能为空'
+		}
+		return
+	}
+	if (!data['content']) {
+		ctx.body = {
+			code: -1,
+			msg: '内容不能为空'
+		}
+		return
+	}
+	data['update_user_id'] = user.user_id
+	data['update_time'] = new Date()
+	try {
+		await Image_src.update(data, { where: { image_id: data['image_id'] } })
+		ctx.body = {
+			code: 0,
+			msg: '成功'
+		}
+	} catch (err) {
+		ctx.body = {
+			code: -1,
+			msg: err.name
+		}
+	}
+})
+
+// 删除图片
+router.post('/delete', async ctx => {
+	let data = ctx.request.body
+	try {
+		await Image_src.destroy({ where: { image_id: { $in: data['ids'] } } })
+		ctx.body = {
+			code: 0,
+			msg: '成功'
 		}
 	} catch (err) {
 		console.log(err)
@@ -68,137 +200,14 @@ router.get('/info', async ctx => {
 	}
 })
 
-// 添加字典
-router.post('/add', async ctx => {
-	let user = ctx.state.user
-	let data = ctx.request.body
-	if (!data['key']) {
-		ctx.body = {
-			code: -1,
-			msg: '键不能为空'
-		}
-		return
-	}
-	if (!data['value']) {
-		ctx.body = {
-			code: -1,
-			msg: '值不能为空'
-		}
-		return
-	}
-	if (!data['type']) {
-		ctx.body = {
-			code: -1,
-			msg: '类型不能为空'
-		}
-		return
-	}
-	data['dict_id'] = snowflake.nextId()
-	data['create_user_id'] = user.user_id
-	data['update_user_id'] = user.user_id
+// 隐藏图片
+router.post('/hide', async ctx => {
+	let { image_id, is_show } = ctx.request.body
 	try {
-		await Sys_dict.create(data)
+		await Image_src.update({ is_show }, { where: { image_id } })
 		ctx.body = {
 			code: 0,
 			msg: '成功'
-		}
-	} catch (err) {
-		ctx.body = {
-			code: -1,
-			msg: err.name
-		}
-	}
-})
-
-// 编辑字典
-router.post('/update', async ctx => {
-	let user = ctx.state.user
-	let data = ctx.request.body
-	if (!data['key']) {
-		ctx.body = {
-			code: -1,
-			msg: '键不能为空'
-		}
-		return
-	}
-	if (!data['value']) {
-		ctx.body = {
-			code: -1,
-			msg: '值不能为空'
-		}
-		return
-	}
-	if (!data['type']) {
-		ctx.body = {
-			code: -1,
-			msg: '类型不能为空'
-		}
-		return
-	}
-	data['update_user_id'] = user.user_id
-	data['update_time'] = new Date()
-	try {
-		await Sys_dict.update(data, { where: { dict_id: data['dict_id'] } })
-		ctx.body = {
-			code: 0,
-			msg: '成功'
-		}
-	} catch (err) {
-		ctx.body = {
-			code: -1,
-			msg: err.name
-		}
-	}
-})
-
-// 删除字典
-router.post('/delete', async ctx => {
-	let data = ctx.request.body
-	try {
-		await Sys_dict.destroy({ where: { dict_id: { $in: data['ids'] } } })
-		ctx.body = {
-			code: 0,
-			msg: '成功'
-		}
-	} catch (err) {
-		ctx.body = {
-			code: -1,
-			msg: err.name
-		}
-	}
-})
-
-// 字典类型列表
-router.get('/type', async ctx => {
-	try {
-		let result = await Sys_dict.findAll({
-			attributes: ['type', 'description'],
-			group: ['type']
-		})
-		ctx.body = {
-			code: 0,
-			msg: '成功',
-			data: result
-		}
-	} catch (err) {
-		ctx.body = {
-			code: -1,
-			msg: err.name
-		}
-	}
-})
-
-// 根据类型获取字典
-router.get('/list/type', async ctx => {
-	let { type } = ctx.query
-	try {
-		let result = await Sys_dict.findAll({
-			where: { type }
-		})
-		ctx.body = {
-			code: 0,
-			msg: '成功',
-			data: result
 		}
 	} catch (err) {
 		console.log(err)

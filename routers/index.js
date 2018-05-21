@@ -47,5 +47,6 @@ router.use(require('./auth').routes())
 router.use(require('./sys_user').routes())
 router.use(require('./sys_role').routes())
 router.use(require('./sys_menu').routes())
+router.use(require('./sys_dict').routes())
 
 module.exports = router

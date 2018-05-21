@@ -3,8 +3,6 @@ const logger = require('koa-logger')
 const bodyParser = require('koa-bodyparser')
 const cors = require('koa2-cors')
 
-const router = require('./routers')
-
 const app = new Koa()
 
 app.use(bodyParser())
@@ -23,6 +21,7 @@ app.use(cors({
 	allowHeaders: ['Content-Type', 'Accept', 'X-Access-Token']
 }))
 
-app.use(router.routes())
+app.use(require('./routers/api').routes())
+app.use(require('./routers/api-h5').routes())
 
 module.exports = app

@@ -1,10 +1,10 @@
 const Router = require('koa-router')
 const router = new Router({prefix: '/auth'})
 const jwt = require('jsonwebtoken')
-const { generatePassword } = require('../utils')
-const jwtConfig = require('../config/jwtConfig')
+const { generatePassword } = require('../../utils')
+const jwtConfig = require('../../config/jwtConfig')
 
-const Sys_user = require('../models/sys_user')
+const Sys_user = require('../../models/sys_user')
 
 // 登录
 router.post('/login', async ctx => {

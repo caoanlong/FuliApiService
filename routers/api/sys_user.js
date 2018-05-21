@@ -1,9 +1,9 @@
 const Router = require('koa-router')
 const router = new Router({prefix: '/sys_user'})
-const { snowflake, generatePassword } = require('../utils')
+const { snowflake, generatePassword } = require('../../utils')
 
-const Sys_user = require('../models/sys_user')
-const Sys_role = require('../models/sys_role')
+const Sys_user = require('../../models/sys_user')
+const Sys_role = require('../../models/sys_role')
 
 // 查看用户列表
 router.get('/list', async ctx => {

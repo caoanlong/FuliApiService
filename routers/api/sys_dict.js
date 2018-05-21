@@ -1,9 +1,9 @@
 const Router = require('koa-router')
 const router = new Router({prefix: '/sys_dict'})
-const { snowflake } = require('../utils')
+const { snowflake } = require('../../utils')
 
-const Sys_dict = require('../models/sys_dict')
-const Sys_user = require('../models/sys_user')
+const Sys_dict = require('../../models/sys_dict')
+const Sys_user = require('../../models/sys_user')
 
 // 查看字典列表
 router.get('/list', async ctx => {

@@ -1,10 +1,10 @@
 const Router = require('koa-router')
 const router = new Router({prefix: '/image'})
-const { snowflake } = require('../utils')
+const { snowflake } = require('../../utils')
 
-const Image_src = require('../models/image')
-const Sys_user = require('../models/sys_user')
-const Sys_dict = require('../models/sys_dict')
+const Image_src = require('../../models/image')
+const Sys_user = require('../../models/sys_user')
+const Sys_dict = require('../../models/sys_dict')
 
 // 查看图片列表
 router.get('/list', async ctx => {

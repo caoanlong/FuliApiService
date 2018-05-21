@@ -1,11 +1,11 @@
 const Router = require('koa-router')
 const router = new Router({prefix: '/sys_menu'})
-const { snowflake, menusTree } = require('../utils')
+const { snowflake, menusTree } = require('../../utils')
 
-const Sys_menu = require('../models/sys_menu')
-const Sys_user = require('../models/sys_user')
-const Sys_role = require('../models/sys_role')
-const Sys_role_menu = require('../models/sys_role_menu')
+const Sys_menu = require('../../models/sys_menu')
+const Sys_user = require('../../models/sys_user')
+const Sys_role = require('../../models/sys_role')
+const Sys_role_menu = require('../../models/sys_role_menu')
 
 // 获取所有菜单
 router.get('/list/all', async ctx => {

@@ -1,7 +1,7 @@
 const Router = require('koa-router')
 const router = new Router({prefix: '/api'})
 const jwt = require('jsonwebtoken')
-const jwtConfig = require('../config/jwtConfig')
+const jwtConfig = require('../../config/jwtConfig')
 
 router.use(async (ctx, next) => {
 	// 过滤登录路由

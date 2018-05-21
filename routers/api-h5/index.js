@@ -1,7 +1,7 @@
 const Router = require('koa-router')
 const router = new Router({prefix: '/api-h5'})
 const jwt = require('jsonwebtoken')
-const jwtConfig = require('../config/jwtConfig')
+const jwtConfig = require('../../config/jwtConfig')
 
 router.use(async (ctx, next) => {
 	await next()
@@ -49,7 +49,7 @@ router.use(async (ctx, next) => {
 // router.use(require('./sys_user').routes())
 // router.use(require('./sys_role').routes())
 // router.use(require('./sys_menu').routes())
-// router.use(require('./sys_dict').routes())
+router.use(require('./sys_dict').routes())
 router.use(require('./image').routes())
 
 module.exports = router

@@ -44,12 +44,10 @@ const Sys_menu = sequelize.define('sys_menu', {
 		type: Sequelize.BIGINT(32)
 	},
 	create_time: {
-		type: Sequelize.DATE(),
-		defaultValue: new Date()
+		type: Sequelize.DATE()
 	},
 	update_time: {
-		type: Sequelize.DATE(),
-		defaultValue: new Date()
+		type: Sequelize.DATE()
 	}
 })
 

@@ -127,6 +127,8 @@ router.post('/add', async ctx => {
 	data['user_id'] = snowflake.nextId()
 	data['create_user_id'] = user.user_id
 	data['update_user_id'] = user.user_id
+	data['create_time'] = new Date()
+	data['update_time'] = new Date()
 	try {
 		let result = await Sys_user.find({ where: { mobile: data['mobile'] }})
 		if (result.user_id) {

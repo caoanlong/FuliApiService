@@ -49,12 +49,10 @@ const Image_src = sequelize.define('image_src', {
 		type: Sequelize.BIGINT(32)
 	},
 	create_time: {
-		type: Sequelize.DATE(),
-		defaultValue: new Date()
+		type: Sequelize.DATE()
 	},
 	update_time: {
-		type: Sequelize.DATE(),
-		defaultValue: new Date()
+		type: Sequelize.DATE()
 	}
 })
 

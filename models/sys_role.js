@@ -21,12 +21,10 @@ const Sys_role = sequelize.define('sys_role', {
 		type: Sequelize.BIGINT(32)
 	},
 	create_time: {
-		type: Sequelize.DATE(),
-		defaultValue: new Date()
+		type: Sequelize.DATE()
 	},
 	update_time: {
-		type: Sequelize.DATE(),
-		defaultValue: new Date()
+		type: Sequelize.DATE()
 	}
 })
 

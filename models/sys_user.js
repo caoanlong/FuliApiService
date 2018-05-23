@@ -40,12 +40,10 @@ const Sys_user = sequelize.define('sys_user', {
 		type: Sequelize.BIGINT(32)
 	},
 	create_time: {
-		type: Sequelize.DATE(),
-		defaultValue: new Date()
+		type: Sequelize.DATE()
 	},
 	update_time: {
-		type: Sequelize.DATE(),
-		defaultValue: new Date()
+		type: Sequelize.DATE()
 	}
 })
 

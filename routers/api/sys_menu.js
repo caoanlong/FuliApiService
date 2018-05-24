@@ -18,10 +18,9 @@ router.get('/list/all', async ctx => {
 			data: menus
 		}
 	} catch (err) {
-		console.log(err)
 		ctx.body = {
 			code: -1,
-			msg: err.name
+			msg: err.toString()
 		}
 	}
 })
@@ -43,10 +42,9 @@ router.get('/list', async ctx => {
 			permissions
 		}
 	} catch (err) {
-		console.log(err)
 		ctx.body = {
 			code: -1,
-			msg: err.name
+			msg: err.toString()
 		}
 	}
 })
@@ -80,10 +78,9 @@ router.get('/info', async ctx => {
 			data: menuInfo
 		}
 	} catch (err) {
-		console.log(err)
 		ctx.body = {
 			code: -1,
-			msg: err.name
+			msg: err.toString()
 		}
 	}
 })
@@ -112,10 +109,9 @@ router.post('/add', async ctx => {
 			msg: '成功'
 		}
 	} catch (err) {
-		console.log(err)
 		ctx.body = {
 			code: -1,
-			msg: err.name
+			msg: err.toString()
 		}
 	}
 })
@@ -144,7 +140,7 @@ router.post('/update', async ctx => {
 	} catch (err) {
 		ctx.body = {
 			code: -1,
-			msg: err.name
+			msg: err.toString()
 		}
 	}
 })
@@ -161,7 +157,7 @@ router.post('/delete', async ctx => {
 	} catch (err) {
 		ctx.body = {
 			code: -1,
-			msg: err.name
+			msg: err.toString()
 		}
 	}
 })

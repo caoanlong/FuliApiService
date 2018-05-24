@@ -53,10 +53,9 @@ router.get('/list', async ctx => {
 			data: result
 		}
 	} catch (err) {
-		console.log(err)
 		ctx.body = {
 			code: -1,
-			msg: err.name
+			msg: err.toString()
 		}
 	}
 })
@@ -92,7 +91,7 @@ router.get('/info', async ctx => {
 	} catch (err) {
 		ctx.body = {
 			code: -1,
-			msg: err.name
+			msg: err.toString()
 		}
 	}
 })
@@ -147,7 +146,7 @@ router.post('/add', async ctx => {
 	} catch (err) {
 		ctx.body = {
 			code: -1,
-			msg: err.name
+			msg: err.toString()
 		}
 	}
 })
@@ -181,7 +180,7 @@ router.post('/update', async ctx => {
 	} catch (err) {
 		ctx.body = {
 			code: -1,
-			msg: err.name
+			msg: err.toString()
 		}
 	}
 })
@@ -198,7 +197,7 @@ router.post('/delete', async ctx => {
 	} catch (err) {
 		ctx.body = {
 			code: -1,
-			msg: err.name
+			msg: err.toString()
 		}
 	}
 })

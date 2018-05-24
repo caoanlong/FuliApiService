@@ -18,10 +18,9 @@ router.get('/list/type', async ctx => {
 			data: result
 		}
 	} catch (err) {
-		console.log(err)
 		ctx.body = {
 			code: -1,
-			msg: err.name
+			msg: err.toString()
 		}
 	}
 })

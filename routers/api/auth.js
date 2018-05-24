@@ -59,10 +59,9 @@ router.post('/login', async ctx => {
 			}
 		}
 	} catch (err) {
-		console.log(err)
 		ctx.body = {
 			code: -1,
-			msg: err.name
+			msg: err.toString()
 		}
 	}
 })
@@ -84,7 +83,7 @@ router.get('/userInfo', async ctx => {
 	} catch (err) {
 		ctx.body = {
 			code: -1,
-			msg: err.name
+			msg: err.toString()
 		}
 	}
 })

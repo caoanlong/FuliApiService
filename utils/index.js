@@ -1,10 +1,23 @@
 const crypto = require('crypto')
+const jwt = require('jsonwebtoken')
+const jwtConfig = require('../config/jwtConfig')
 
 exports.snowflake = require('node-snowflake').Snowflake
+
+
 
 exports.generatePassword = (password) => {
 	const key = crypto.pbkdf2Sync(password, 'xxoo_longge19890204_fuck', 1000, 32, 'sha256')
 	return key.toString('hex')
+}
+
+exports.getVerCode = (num) => {
+	let result = ''
+	for (let i = 0; i < num; i++) {
+		let ran = Math.floor(Math.random()*10)
+		result += ran
+	}
+	return result
 }
 
 exports.menusTree = (source) => {
@@ -40,6 +53,41 @@ function sortAll(arr) {
 	for (let i = 0; i < arr.length; i++) {
 		if (arr[i].children && arr[i].children.length > 0) {
 			sortAll(arr[i].children)
+		}
+	}
+}
+
+exports.decodeToken = async (ctx, next) => {
+	const token = ctx.headers['x-access-token']
+	if (token) {
+		try {
+			const decoded = await jwt.verify(token, jwtConfig.secret)
+			if (decoded) {
+				if (parseInt(Date.now()/1000) > decoded.exp) {
+					ctx.body = {
+						code: 104,
+						msg: 'token已过期'
+					}
+				} else {
+					ctx.state.member = decoded
+					await next()
+				}
+			} else {
+				ctx.body = {
+					code: 103,
+					msg: 'token非法'
+				}
+			}
+		} catch (err) {
+			ctx.body = {
+				code: 102,
+				msg: 'token解析失败'
+			}
+		}
+	} else {
+		ctx.body = {
+			code: 101,
+			msg: '未登录'
 		}
 	}
 }

@@ -12,7 +12,9 @@ router.get('/list', async ctx => {
 	let pageIndex = Number(data.pageIndex || 1)
 	let pageSize = Number(data.pageSize || 10)
 	let offset = (pageIndex - 1) * pageSize
-	let where = {}
+	let where = {
+		'is_show': true
+	}
 	if (data['level_id']) {
 		where['level_id'] =  data['level_id']
 	}

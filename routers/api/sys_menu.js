@@ -32,6 +32,7 @@ router.get('/list', async ctx => {
 	try {
 		let userInfo = await Sys_user.findById(user_id)
 		let roleInfo = await userInfo.getSys_role()
+		console.log(roleInfo)
 		let menuList = await roleInfo.getSys_menus()
 		let permissions = await menuList.map(item => item.route_name)
 		let menus = await menusTree(menuList)

@@ -11,7 +11,7 @@ router.get('/list/type', async ctx => {
 		where['type'] = type
 	}
 	try {
-		let result = await Sys_dict.findAll({ where })
+		let result = await Sys_dict.findAll({ where, order: ['sort'] })
 		ctx.body = {
 			code: 0,
 			msg: '成功',

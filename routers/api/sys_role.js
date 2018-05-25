@@ -81,7 +81,7 @@ router.post('/add', async ctx => {
 	data['update_time'] = new Date()
 	try {
 		let result = await Sys_role.find({ where: { name: data['name'] }})
-		if (result.role_id) {
+		if (result && result.role_id) {
 			ctx.body = {
 				code: -1,
 				msg: '角色名已存在'
